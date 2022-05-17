@@ -11,7 +11,7 @@ from MessageQueuesService.configfile import config
 LENGTH_QUEUE = config["QUEUE"]["queue_limit"]
 
 def create_response_worker_queue(message):
-    # creating the response that is sent from the worker
+    # creating the response that is sent from the worker to the message queue
     return {
         "source": "worker",
         "destination": "http://127.0.0.1:7500",
@@ -19,7 +19,7 @@ def create_response_worker_queue(message):
     }
 
 def create_response_queue_worker(message):
-    # creating the response that is sent to the client
+    # creating the response that is sent rom the message queue to the client
     return {
         "source": "http://127.0.0.1:7500",
         "destination": "worker",
