@@ -114,43 +114,40 @@ def validate_push_result(data):
 def pull_job():
     if queue_jobs.empty():
         return {"error": "Sorry, but the queue you wanted to pull the message out of is empty, so please try again later"}
-    job = queue_jobs.get()
-    delete_message_job_db(job)
-    # return {"success": True}
+    job = queue_jobs.get()  # pull the job from the queue
+    delete_message_job_db(job)  # delete the job from the database
     return job.serialize()
 
 def push_job(job):
     if queue_jobs.qsize() >= LENGTH_QUEUE:
         return {"error": "Sorry, but the queue you wanted to push the message in is full, so please try again later"}
-    queue_jobs.put(job)
-    # return {"success": True}
+    queue_jobs.put(job)  # push the job into the queue
     return ""
 
 
 def pull_result():
     if queue_results.empty():
         return {"error": "Sorry, but the queue you wanted to pull the message out of is empty, so please try again later"}
-    result = queue_results.get()
-    delete_message_result_db(result)
-    # return {"success": True}
+    result = queue_results.get()  # pull the result from the queue
+    delete_message_result_db(result)  # delete the result from the database
     return result.serialize()
 
 def push_result(result):
     if queue_results._qsize() > LENGTH_QUEUE:
         return {"error": "Sorry, but the queue you wanted to push the message in is full, so please try again later"}
-    queue_results.put(result)
-    # return {"success": True}
+    queue_results.put(result)  # push the result into the queue
     return ""
 
 
 def create_message_job_db(data):  # creating and adding the job description from the queue in the database
-    # creating an instance of class Job
+    # creating an instance of class Job_Queue
     new_job = Jobs_Queue(id=data["job_id"], username=data['username'], timestamp=data['timestamp'], status=data['status'], date_range=data['date_range'], assets=data['assets'])
     db.session.add(new_job)  # add job to database
     db.session.commit()  # save changes to database
     return new_job.serialize()
 
 def create_message_result_db(data): # creating and adding the result of a job from the queue in the database
+    # creating an instance of class Result_Queue
     new_result = Results_Queue(job_id=data['job_id'], timestamp=data['timestamp'], assets=data['assets'])
     db.session.add(new_result)  # add result to database
     db.session.commit()  # save changes to database
@@ -158,10 +155,10 @@ def create_message_result_db(data): # creating and adding the result of a job fr
 
 def delete_message_job_db(job):
     try:
-        # get result by the job id
-        result = Jobs_Queue.query.get(job["job_id"])
+        # get job by the job id
+        job = Jobs_Queue.query.get(job["job_id"])
 
-        db.session.delete(result)  # delete the result
+        db.session.delete(job)  # delete the job
         db.session.commit()  # save changes
         return {"success": True}
     except:
@@ -188,15 +185,11 @@ class Message_Jobs(Resource):  # for pushing and pulling jobs into and out of th
         data = request.json
 
         # user permission is already checked in the master data service when requesting a job
-        # validation = validate_user_permission_push_pull(data["username"],
-        #                                                   data["token"])  # check if the user has permission
-        # if validation != "":
-        #     return validation
 
         job = fetch_job(data["job_id"])
         response = push_job(job)
-        if not response:
-            create_message_job_db(data)
+        if not response:  # if the jobs queue is not full
+            create_message_job_db(data)  # store it in the databse
 
         response = create_response_masterdata_queue(response)
         return response
@@ -221,7 +214,7 @@ class Message_Results(Resource):  # for pushing and pulling results into and out
 
         result = fetch_result(data["job_id"])
         response = push_result(result)
-        if not response:
+        if not response:  # if the results queue is not full
             create_message_result_db(data)
         response = create_response_worker_queue(result)
         return response
