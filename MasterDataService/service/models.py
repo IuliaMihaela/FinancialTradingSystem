@@ -35,7 +35,7 @@ class Result(db.Model):
         }
 
     def __repr__(self):
-        return f"Job('{self.id}', '{self.job_id}', '{self.assets}')"
+        return f"Result('{self.id}', '{self.job_id}', '{self.assets}')"
 
 
 class Request(db.Model):
@@ -57,7 +57,7 @@ class Request(db.Model):
         }
 
     def __repr__(self):
-        return f"Job('{self.id}', '{self.username}', '{self.timestamp}', '{self.status}', '{self.date_range}', '{self.assets}')"
+        return f"Request('{self.id}', '{self.username}', '{self.timestamp}', '{self.status}', '{self.date_range}', '{self.assets}')"
 
 
 

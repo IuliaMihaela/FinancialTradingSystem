@@ -2,6 +2,7 @@ from MessageQueuesService.service import db
 
 
 class Jobs_Queue(db.Model):
+    __tablename__ = 'jobs_queue'
     id = db.Column(db.String, primary_key=True)
     username = db.Column(db.String)
     timestamp = db.Column(db.String)
@@ -20,13 +21,13 @@ class Jobs_Queue(db.Model):
         }
 
     def __repr__(self):
-        return f"Job('{self.id}', '{self.username}', '{self.timestamp}', '{self.status}', '{self.date_range}', '{self.assets}')"
+        return f"Jobs_Queue('{self.id}', '{self.username}', '{self.timestamp}', '{self.status}', '{self.date_range}', '{self.assets}')"
 
 
 
 
 class Results_Queue(db.Model):
-    job_id = db.Column(db.String, db.ForeignKey('job.id'),
+    job_id = db.Column(db.String, db.ForeignKey('jobs_queue.id'),
                        primary_key=True)  # we are having the job id as a primary key for the result
     timestamp = db.Column(db.String)
     assets = db.Column(db.String)  # collection of pair asset number/ a real number between 0.0 and 1.0
@@ -39,4 +40,4 @@ class Results_Queue(db.Model):
         }
 
     def __repr__(self):
-        return f"Job('{self.id}', '{self.job_id}', '{self.assets}')"
+        return f"Results_Queue('{self.id}', '{self.job_id}', '{self.assets}')"

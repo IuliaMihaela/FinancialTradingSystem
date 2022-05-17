@@ -1,7 +1,7 @@
 import queue
 from MasterDataService.service.master_data_service import *
 from AuthenticationService.service.authentication_service import *
-from models import Jobs_Queue, Results_Queue
+from MessageQueuesService.service.models import Jobs_Queue, Results_Queue
 from MessageQueuesService.service import api, db
 
 # queue_jobs = queue.Queue
@@ -109,7 +109,7 @@ def validate_push_result(data):
     return ""
 
 
-def pull_job(data):
+def pull_job():
     if queue_jobs.empty():
         return {"error": "Sorry, but the queue you wanted to pull the message out of is empty, so please try again later"}
     job = queue_jobs.get()
@@ -125,7 +125,7 @@ def push_job(job):
     return ""
 
 
-def pull_result(data):
+def pull_result():
     if queue_results.empty():
         return {"error": "Sorry, but the queue you wanted to pull the message out of is empty, so please try again later"}
     result = queue_results.get()
@@ -179,7 +179,7 @@ def delete_message_result_db(result):
 
 
 class Message_Jobs(Resource):  # for pushing and pulling jobs into and out of the jobs queue
-    def put(self):  # for pushing a job into the queue
+    def post(self):  # for pushing a job into the queue
         validation = validate_push_job(request.json)  # check if all data was provided
         if validation != "":
             return validation
@@ -207,7 +207,7 @@ class Message_Jobs(Resource):  # for pushing and pulling jobs into and out of th
 
 
 class Message_Results(Resource):  # for pushing and pulling results into and out of the results queue
-    def put(self):  # for pushing a result into the queue
+    def post(self):  # for pushing a result into the queue
         validation = validate_push_result(request.json)  # check if all data was provided
         if validation != "":
             return validation
@@ -338,10 +338,10 @@ class Results_Queue(Resource):  # for creating, deleting and listing results que
         return response
 
 
-api.add_resource(Message_Jobs,'/message_jobs/api')
-api.add_resource(Message_Results,'/message_result/api')
-api.add_resource(Jobs_Queue,'/jobs_queue/api')
-api.add_resource(Results_Queue,'/results_queue/api')
+api.add_resource(Message_Jobs, '/message_jobs/api')
+api.add_resource(Message_Results, '/message_results/api')
+api.add_resource(Jobs_Queue, '/jobs_queue/api')
+api.add_resource(Results_Queue, '/results_queue/api')
 
 
 
