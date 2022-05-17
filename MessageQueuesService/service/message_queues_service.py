@@ -88,7 +88,7 @@ def validate_pull_job(data):
     return ""
 
 def validate_queue(data):
-    # checking if all data needed for pulling a job was provided
+    # checking if all data needed for when creating, deleting or listing a queue is provided
     if "username" not in data:
         return {"error": "no user provided"}
     if "token" not in data:
