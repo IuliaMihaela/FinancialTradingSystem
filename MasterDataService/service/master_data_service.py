@@ -315,4 +315,4 @@ class Requests(Resource):
 
 api.add_resource(Jobs, '/jobs/api')
 api.add_resource(Results, '/results/api')
-api.add_resource(Requests, '/requests/<string:job_id>')
+api.add_resource(Requests, '/requests/api/<string:job_id>')

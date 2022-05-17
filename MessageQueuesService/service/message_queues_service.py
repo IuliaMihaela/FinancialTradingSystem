@@ -8,7 +8,15 @@ from MessageQueuesService.service import api, db
 # queue_results = queue.Queue
 
 LENGTH_QUEUE = 100
-def create_response_worker(message):
+def create_response_worker_queue(message):
+    # creating the response that is sent to the client
+    return {
+        "source": "worker",
+        "destination": "http://127.0.0.1:7500",
+        "message_body": message
+    }
+
+def create_response_queue_worker(message):
     # creating the response that is sent to the client
     return {
         "source": "http://127.0.0.1:7500",
@@ -16,11 +24,19 @@ def create_response_worker(message):
         "message_body": message
     }
 
-def create_response_masterdata(message):
-    # creating the response that is sent to the client
+def create_response_masterdata_queue(message):
+    # creating the response that is sent to from the master data service to the message queue service
     return {
-        "source": "http://127.0.0.1:7500",
-        "destination": "Master Data Service",
+        "source": "http://127.0.0.1:5000",
+        "destination": "http://127.0.0.1:7500",
+        "message_body": message
+    }
+
+def create_response_queue_masterdata(message):
+    # creating the response that is sent to from the master data service to the message queue service
+    return {
+        "source": "http://127.0.0.1:5000",
+        "destination": "http://127.0.0.1:7500",
         "message_body": message
     }
 
@@ -180,12 +196,12 @@ class Message_Jobs(Resource):  # for pushing and pulling jobs into and out of th
         if not response:
             create_message_job_db(data)
 
-        response = create_response(response)
+        response = create_response_masterdata_queue(response)
         return response
 
     def get(self):  # for pulling a job out of the queue
         job = pull_job()
-        response = create_response(job)
+        response = create_response_queue_worker(job)
         return response
 
 
@@ -205,12 +221,12 @@ class Message_Results(Resource):  # for pushing and pulling results into and out
         response = push_result(result)
         if not response:
             create_message_result_db(data)
-        response = create_response(result)
+        response = create_response_worker_queue(result)
         return response
 
     def get(self):  # for pulling a result out of the queue
         result = queue_results.get()
-        response = create_response(result)
+        response = create_response_queue_masterdata(result)
         return response
 
 
@@ -220,6 +236,7 @@ def delete_jobs_queue():
         # delete jobs from the queue in the database
         db.session.query(Jobs_Queue).delete()
         db.session.commit()
+        return {"success": True}
     except:
         return {"error": "The queue for the jobs does not exist"}
 
@@ -230,6 +247,7 @@ def delete_results_queue():
         # delete results from the queue in the database
         db.session.query(Results_Queue).delete()
         db.session.commit()
+        return {"success": True}
     except:
         return {"error": "The queue for the results does not exist"}
 
@@ -273,8 +291,9 @@ class Jobs_Queue(Resource):  # for creating, deleting and listing results queue
         if validation != "":
             return validation
 
-        delete_jobs_queue()
-        return {"success": True}
+        result = delete_jobs_queue()
+        response = create_response_queue_worker(result)
+        return response
 
 
 class Results_Queue(Resource):  # for creating, deleting and listing results queue
@@ -304,24 +323,25 @@ class Results_Queue(Resource):  # for creating, deleting and listing results que
         return queue_results
 
 
-def delete(self):
-    validation = validate_queue(request.json)  # check if all data was provided
-    if validation != "":
-        return validation
-    data = request.json
-    validation = validate_user_permission_queue(data["username"],
-                                                data["token"])  # check if the user has permission
-    if validation != "":
-        return validation
+    def delete(self):
+        validation = validate_queue(request.json)  # check if all data was provided
+        if validation != "":
+            return validation
+        data = request.json
+        validation = validate_user_permission_queue(data["username"],
+                                                    data["token"])  # check if the user has permission
+        if validation != "":
+            return validation
 
-    delete_results_queue()
-    return {"success": True}
+        result = delete_results_queue()
+        response = create_response_queue_worker(result)
+        return response
 
 
-api.add_resource(Message_Jobs)
-api.add_resource(Message_Results)
-api.add_resource(Jobs_Queue)
-api.add_resource(Results_Queue)
+api.add_resource(Message_Jobs,'/message_jobs/api')
+api.add_resource(Message_Results,'/message_result/api')
+api.add_resource(Jobs_Queue,'/jobs_queue/api')
+api.add_resource(Results_Queue,'/results_queue/api')
 
 
 
