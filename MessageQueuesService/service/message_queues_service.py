@@ -248,7 +248,7 @@ def delete_results_queue():
 
 
 
-class Jobs_Queue(Resource):  # for creating, deleting and listing results queue
+class Jobs_Queue(Resource):  # for creating, deleting and listing job queue
     def post(self):
         validation = validate_queue(request.json)  # check if all data was provided
         if validation != "":
@@ -273,7 +273,9 @@ class Jobs_Queue(Resource):  # for creating, deleting and listing results queue
         if validation != "":
             return validation
 
-        return queue_jobs
+        response = create_response_queue_worker(queue_jobs)
+        return response
+
 
 
     def delete(self):
@@ -315,8 +317,8 @@ class Results_Queue(Resource):  # for creating, deleting and listing results que
         if validation != "":
             return validation
 
-        return queue_results
-
+        response = create_response_queue_worker(queue_results)
+        return response
 
     def delete(self):
         validation = validate_queue(request.json)  # check if all data was provided
