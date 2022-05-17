@@ -37,8 +37,8 @@ def create_response_masterdata_queue(message):
 def create_response_queue_masterdata(message):
     # creating the response that is sent to from the master data service to the message queue service
     return {
-        "source": "http://127.0.0.1:5001",
-        "destination": "http://127.0.0.1:7500",
+        "source": "http://127.0.0.1:7500",
+        "destination": "http://127.0.0.1:5001",
         "message_body": message
     }
 
