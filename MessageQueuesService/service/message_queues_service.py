@@ -19,7 +19,7 @@ def create_response_worker_queue(message):
     }
 
 def create_response_queue_worker(message):
-    # creating the response that is sent rom the message queue to the client
+    # creating the response that is sent rom the message queue to the worker
     return {
         "source": "http://127.0.0.1:7500",
         "destination": "worker",
