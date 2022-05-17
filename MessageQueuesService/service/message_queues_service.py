@@ -3,13 +3,15 @@ from MasterDataService.service.master_data_service import *
 from AuthenticationService.service.authentication_service import *
 from MessageQueuesService.service.models import Jobs_Queue, Results_Queue
 from MessageQueuesService.service import api, db
+from MessageQueuesService.configfile import config
 
 # queue_jobs = queue.Queue
 # queue_results = queue.Queue
 
-LENGTH_QUEUE = 100
+LENGTH_QUEUE = config["QUEUE"]["queue_limit"]
+
 def create_response_worker_queue(message):
-    # creating the response that is sent to the client
+    # creating the response that is sent from the worker
     return {
         "source": "worker",
         "destination": "http://127.0.0.1:7500",
@@ -27,7 +29,7 @@ def create_response_queue_worker(message):
 def create_response_masterdata_queue(message):
     # creating the response that is sent to from the master data service to the message queue service
     return {
-        "source": "http://127.0.0.1:5000",
+        "source": "http://127.0.0.1:5001",
         "destination": "http://127.0.0.1:7500",
         "message_body": message
     }
@@ -35,7 +37,7 @@ def create_response_masterdata_queue(message):
 def create_response_queue_masterdata(message):
     # creating the response that is sent to from the master data service to the message queue service
     return {
-        "source": "http://127.0.0.1:5000",
+        "source": "http://127.0.0.1:5001",
         "destination": "http://127.0.0.1:7500",
         "message_body": message
     }
