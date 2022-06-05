@@ -5,7 +5,8 @@ from MessageQueuesService.service.models import Jobs_Queue, Results_Queue
 from MessageQueuesService.service import api, db
 from MessageQueuesService.configfile import config
 from timeseries import *
-
+from requests import put, get, post, delete
+import json
 
 def calculate_result(list_assets):
     list_time_series = create_time_series(len(list_assets), 10)
@@ -26,14 +27,31 @@ class Calculations(Resource):
 
 
 
-time_series=create_time_series(100,300)
+###################################################################################
+
+r = get('http://localhost:5000/users/login/api')
+print(r.json())
+
+users = r.json()
+token = users["felicity"]["token"]
+print("token:", token)
+
+r = get('http://localhost:5000/users/login/api')
+print(r.json())
+
+users = r.json()
+token = users["felicity"]["token"]
+print("token:", token)
+time_series = create_time_series(100, 300)
 while True:
-    <accept request>
-    request = [1,2,3,4]
-    for asset in request:
+    r = get('http://localhost:7500/message_jobs/api', json={'username': '', 'token': token})
+    job_response = json.loads(r.content.decode())
+    job_assets = job_response["message_body"]["assets"]
+    list_assets = job_assets.split(',')
+    for asset in list_assets:
         ts = time_series[asset]
         model = linear_fit(ts)
-        pred=predict_value(model,301)
+        pred = predict_value(model,301)
 
 
 
