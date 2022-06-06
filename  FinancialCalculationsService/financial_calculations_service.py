@@ -24,7 +24,7 @@ while True:
     try:
         job_response = json.loads(r.content.decode())
         job_assets = job_response["message_body"]["assets"]  # getting the assets from the response as a string
-        list_assets = job_assets.split(',')  # convert to assets into a list
+        list_assets = job_assets.split(',')  # convert job assets into a list
 
         if comm.rank == 0:
             tasks = [
@@ -35,6 +35,7 @@ while True:
             ]
         else:
             tasks = None
+
         # Scatter parameters arrays
         unit = comm.scatter(tasks, root=0)
 
