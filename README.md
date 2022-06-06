@@ -1,6 +1,6 @@
 # FinancialTradingSystem
 
-There are 3 main folders, each of them reprezenting a service: Authentication, Master Data, Message Queue and Financial Calculations.
+There are 3 main folders, each of them representing a service: Authentication, Master Data, Message Queue and Financial Calculations.
 
 The financial calculations service:
 
