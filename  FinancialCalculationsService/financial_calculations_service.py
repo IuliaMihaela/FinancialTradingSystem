@@ -3,8 +3,7 @@ from requests import put, get, post, delete
 import json
 from mpi4py import MPI
 
-
-###################################################################################
+# root node
 comm = MPI.COMM_WORLD
 
 
