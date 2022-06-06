@@ -75,7 +75,7 @@ from mpi4py import MPI
 #
 #         print("pushing a result into the queue")
 #         job_id = job_response["message_body"]["id"]
-#         r = post('http://localhost:7500/message_results/api', json={'job_id': job_id,'username': 'felicity', "token": token, "timestamp": "15-04-2022 15:54", "assets": "1,2,3,4,5,11"})
+#         r = post('http://localhost:7500/message_results/api', json={'job_id': job_id,'username': 'felicity', "token": token, "timestamp": "15-04-2022 15:54", "assets": avg_result})
 #         print(r.content.decode())
 #         job_response = json.loads(r.content.decode())
 #         print(job_response)
